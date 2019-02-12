@@ -1,0 +1,101 @@
+---
+experimental:
+  notify:
+    branches:
+      only:
+        - master
+version: 2
+
+defaults: &defaults
+  working_directory: /app
+  docker:
+    - image: nestedtech/docker-python
+
+jobs:
+  build_test_workspace:
+    <<: *defaults
+    steps:
+      ## SETUP ENV ##
+      - checkout
+      - run: env
+
+      - restore_cache:
+          keys:
+            - v01-dependency-cache-{{ checksum "requirements.txt" }}
+
+      - run: /root/virtualenv/bin/pip install -q --process-dependency-links -r requirements.txt
+
+      - save_cache:
+          key: v01-dependency-cache-{{ checksum "requirements.txt" }}
+          paths:
+            - /root/virtualenv
+
+      - persist_to_workspace:
+          root: /
+          paths:
+            - root/virtualenv
+            - app
+
+  pytest:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /
+      - run: env
+
+      - run: /root/virtualenv/bin/pytest looker_prometheus_exporter --doctest-modules -v
+
+  pylint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /
+      - run: env
+      - run: /root/virtualenv/bin/pylint looker_prometheus_exporter -E --rcfile=/root/pylintrc
+
+  check_formatted:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /
+      - run: env
+      - run: /root/virtualenv/bin/yapf -dr .
+
+  gcp_deploy:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build docker image, push to GCP and deploy
+          command: |
+            git clone git@github.com:nested-tech/gcp-setup.git /root/gcp-setup
+            /root/gcp-setup/kubernetes/app-deployment/deploy.sh --app looker-prometheus-exporter --deploy-tasks-only
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - check_formatted:
+          requires:
+            - build_test_workspace
+      - build_test_workspace
+      - pylint:
+          requires:
+            - build_test_workspace
+      - pytest:
+          requires:
+            - build_test_workspace
+      # - gcp_deploy:
+      #     context: org-global
+      #     requires:
+      #       - check_formatted
+      #       - pytest
+      #       - pylint
+      #       - check_migrations
+      #       - validate_queries
+      #       - build_api_docs
+      #     filters:
+      #       branches:
+      #         only: master
