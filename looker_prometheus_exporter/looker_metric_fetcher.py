@@ -6,7 +6,7 @@ import time
 from prometheus_client import Summary
 from datetime import datetime, timedelta
 
-from .looker_auth import LookerAuth
+from looker_prometheus_exporter.looker_auth import LookerAuth
 
 
 class LookerMetricFetcher(object):

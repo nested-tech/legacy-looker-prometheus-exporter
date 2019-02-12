@@ -3,7 +3,7 @@ import logging
 
 from prometheus_client import start_http_server
 
-from .looker_metric_fetcher import LookerMetricFetcher
+from looker_prometheus_exporter.looker_metric_fetcher import LookerMetricFetcher
 
 if __name__ == '__main__':
     client_id = os.getenv("LOOKER_CLIENT_ID")
