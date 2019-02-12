@@ -30,11 +30,13 @@ class LookerAuth(object):
             self._expiry_time = datetime.now() + timedelta(seconds=credentials["expires_in"] - 60)
             logging.debug("New credentials succesfully fetched.")
         except:
-            logging.error("""
+            logging.error(
+                """
 Couldn't find credentials in Looker response:
     {}
 If you're seeing 'Not found' this could be because of an incorrect client_id/client_secret.
-            """.format(credentials))
+            """.format(credentials)
+            )
             raise
 
     def get_token(self):

@@ -28,17 +28,19 @@ class LookerMetricFetcher(object):
             time.sleep(self._interval * 60)
 
     def _fetch_metrics(self):
-        data = json.dumps({
-            "model": "i__looker",
-            "view": "dashboard_performance",
-            "fields": ["dashboard_performance.seconds_until_last_tile_finished_rendering", "event.id"],
-            "filters": {
-                "history.real_dash_id": self._dashboard_id,
-                "dashboard_performance.seconds_until_last_tile_finished_rendering": "NOT NULL",
-                "dashboard_performance.last_event_at_date": "{} minutes".format(self._interval),
-                "event.id": ">{}".format(self._max_event_id)
-            },
-        })
+        data = json.dumps(
+            {
+                "model": "i__looker",
+                "view": "dashboard_performance",
+                "fields": ["dashboard_performance.seconds_until_last_tile_finished_rendering", "event.id"],
+                "filters": {
+                    "history.real_dash_id": self._dashboard_id,
+                    "dashboard_performance.seconds_until_last_tile_finished_rendering": "NOT NULL",
+                    "dashboard_performance.last_event_at_date": "{} minutes".format(self._interval),
+                    "event.id": ">{}".format(self._max_event_id)
+                },
+            }
+        )
 
         headers = {"Authorization": "Bearer {}".format(self._auth.get_token())}
         response = requests.post(self._query_url, headers=headers, data=data)
