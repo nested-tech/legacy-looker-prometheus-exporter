@@ -87,15 +87,15 @@ workflows:
       - pytest:
           requires:
             - build_test_workspace
-      # - gcp_deploy:
-      #     context: org-global
-      #     requires:
-      #       - check_formatted
-      #       - pytest
-      #       - pylint
-      #       - check_migrations
-      #       - validate_queries
-      #       - build_api_docs
-      #     filters:
-      #       branches:
-      #         only: master
+      - gcp_deploy:
+          context: org-global
+          requires:
+            - check_formatted
+            - pytest
+            - pylint
+            - check_migrations
+            - validate_queries
+            - build_api_docs
+          filters:
+            branches:
+              only: master
