@@ -15,8 +15,7 @@ class LookerQueryError(Exception):
 
 
 class LookerMetricFetcher(object):
-    def __init__(self, *, client_id, client_secret, fetch_interval, looker_base_url, dashboard_id):
-        self._interval = fetch_interval
+    def __init__(self, *, client_id, client_secret, looker_base_url, dashboard_id):
         self._query_url = "{}/api/3.0/queries/run/json".format(looker_base_url)
         self._dashboard_id = dashboard_id
 
@@ -79,7 +78,7 @@ class LookerMetricFetcher(object):
             return {
                 "history.real_dash_id": self._dashboard_id,
                 "dashboard_performance.seconds_until_last_tile_finished_rendering": "NOT NULL",
-                "dashboard_performance.last_event_at_date": "10 minutes".format(self._interval),
+                "dashboard_performance.last_event_at_date": "10 minutes",
             }
 
         return {

@@ -11,11 +11,7 @@ class TestMetricFetcher(TestCase):
     @patch("looker_prometheus_exporter.looker_metric_fetcher.LookerAuth.get_token", return_value="i_r_bad_token")
     def test_raises_auth_error_appropriately(self, mocked_token_getter, mocked_post):
         metric_fetcher = LookerMetricFetcher(
-            client_id="i_r_id",
-            client_secret="i_r_secret",
-            fetch_interval=1,
-            looker_base_url="https://example.com",
-            dashboard_id=42
+            client_id="i_r_id", client_secret="i_r_secret", looker_base_url="https://example.com", dashboard_id=42
         )
 
         mock_response = MagicMock(Response)
