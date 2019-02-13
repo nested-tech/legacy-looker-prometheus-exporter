@@ -4,6 +4,10 @@ import logging
 from datetime import datetime, timedelta
 
 
+class LookerAuthenticationError(Exception):
+    pass
+
+
 class LookerAuth(object):
     def __init__(self, *, client_id, client_secret, looker_base_url):
         self._client_id = client_id
