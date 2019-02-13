@@ -58,7 +58,8 @@ class LookerMetricFetcher(object):
             if "authentication" in response.json()["message"]:
                 raise LookerAuthenticationError
             else:
-                raise
+                # TODO: Add actual useful exception
+                raise Exception
 
         response_time = response.elapsed.seconds + response.elapsed.microseconds / 1000000
         self._query_response_time_summary.observe(response_time)

@@ -17,8 +17,6 @@ class LookerAuth(object):
         self._auth_token = None
         self._expiry_time = datetime.now()
 
-        self._authenticate()
-
     def _authenticate(self):
         logging.debug("No up-to-date token. Authenticating now.")
         params = {
